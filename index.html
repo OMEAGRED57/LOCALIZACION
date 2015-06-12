@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!--meta charset="UTF-8"-->
+		<title>GEOLOCALIZACION</title>
+		<link rel="stylesheet"  type="text/css" href="css/jquery-ui.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.4.5.min.css" />
+		<link rel="stylesheet" href="css/jquery.mobile.theme-1.4.5.min.css" />
+		<script src="cordova.js"></script>
+		<script type="text/javascript" src="js/jquery-ui.js"></script>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+		<script type="text/javascript">
+			$(document).on("pageinit","#PAGINAMAPA",function(e, data){
+				//document.addEventListener("deviceready",onDeviceReady,false);
+							alert("ejecucion");	
+				//function onDeviceReady(){
+					var defaultPos=new google.maps.LatLng(19.463986, -97.692405);
+					
+					if(navigator.geolocation){
+						function exito(posicion){
+							alert("ejecucion");
+							MuestraMapa(new google.maps.LatLng(posicion.coords.latitude, posicion.coords.longitude));
+						}
+						
+						function falla(error){
+							//alert("error en el servicio de golocalizacion"+error.code);
+							alert("ERROR");
+							MuestraMapa(defaultPos);
+						}	
+						
+						var opciones={maximumAge:500000, enableHighAccuracy:true,timeout:5000};
+						navigator.geolocation.getCurrentPosition(exito, falla, opciones);		
+					}	
+					else{
+						MuestraMapa(defaultPos);
+					}				
+				
+		
+				function MuestraMapa(latlng){
+					var myoptions={
+						zoom:16,
+						center:latlng,
+						disableDefaultUI:true,
+						mapTypeId: google.maps.MapTypeId.ROADMAP};
+					
+					var map= new google.maps.Map(document.getElementById("map-canvas"),myoptions);
+					
+					var infoVentana=new google.maps.InfoWindow({
+						position:latlng,
+						content:"<p>tu posicion actual es: </p>"+latlng
+					});
+					
+					var marca=new google.maps.marker({
+						position:latlng,
+						map:map,
+						title:"MI POSICION",
+						animation:google.maps.Animation.DROP
+					});
+					
+					google.maps.event.addListener(marca, "click", function(){infoVentana.open(map,marca);});
+				}
+			});
+		
+		</script>
+		<style>
+		/* type="text/css">
+			p
+			{
+				text-align:center;
+			}*/
+			#map-canvas{
+				height:100%;
+				width:100%;
+				padding:0px;
+				position: absolute;
+				top:40px;
+				right: 0px;
+				bottom: 0px;
+				left: 0px;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div data-role="page" id="PAGINAMAPA" data-url="map-page">
+			<div data-role="header">
+				<p>TU POSICION ACTUAL ES:</p>
+			</div>
+			<div data-role="content">
+				<div id="map-canvas">
+					
+				</div>
+			</div>
+			<div data-role="footer" data-position="fixed">
+				<p>DERECHOS RESERVADOS</p>
+			</div>
+		</div>
+	</body>
+</html>
